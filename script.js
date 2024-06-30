@@ -84,7 +84,7 @@ submitButton.addEventListener('click', () => {
         resultElement.textContent = `Time taken: ${timeTaken.toFixed(2)} seconds. Words per minute: ${wordsPerMinute.toFixed(2)}. Accuracy: ${accuracy.toFixed(2)}%`;
         addRecord(levelSelect.value, timeTaken.toFixed(2), wordsPerMinute.toFixed(2), accuracy.toFixed(2));
     } else {
-        resultElement.textContent = `Text does not match. Please try again. Accuracy: ${accuracy.toFixed(2)}%`;
+        resultElement.textContent = `Text does not match. Please try again.`;
     }
 
     inputElement.disabled = true;
