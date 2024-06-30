@@ -9,8 +9,8 @@ const recordsTable = document.getElementById('recordsTable').getElementsByTagNam
 const clearHistoryButton = document.getElementById('clearHistory');
 let startTime;
 let timerInterval;
-let levelSelected = false; // Track if a level has been selected
-let typingStarted = false; // Track if typing has started
+let levelSelected = false;
+let typingStarted = false;
 
 const texts = {
     beginner: "The quick brown fox jumps over the lazy dog",
@@ -42,6 +42,7 @@ levelSelect.addEventListener('change', () => {
         if (!levelSelected) {
             levelSelected = true;
         }
+        textElement.textContent = texts[levelSelect.value];
     }
 });
 
@@ -54,8 +55,8 @@ startButton.addEventListener('click', () => {
     levelSelected = true;
     typingStarted = true;
 
-    levelSelect.disabled = true; // Disable level select once started
-    levelSelect.dataset.previousValue = levelSelect.value; // Store previous value
+    levelSelect.disabled = true;
+    levelSelect.dataset.previousValue = levelSelect.value;
     inputElement.value = '';
     inputElement.disabled = false;
     submitButton.disabled = false;
@@ -72,9 +73,9 @@ startButton.addEventListener('click', () => {
 });
 
 submitButton.addEventListener('click', () => {
-    clearInterval(timerInterval); // Stop the timer when Submit is clicked
+    clearInterval(timerInterval);
     const currentTime = new Date().getTime();
-    const timeTaken = (currentTime - startTime) / 1000; // seconds
+    const timeTaken = (currentTime - startTime) / 1000;
     const wordsTyped = inputElement.value.trim().split(/\s+/).length;
     const wordsPerMinute = (wordsTyped / timeTaken) * 60;
     const accuracy = calculateAccuracy(textElement.textContent, inputElement.value.trim());
@@ -88,9 +89,9 @@ submitButton.addEventListener('click', () => {
 
     inputElement.disabled = true;
     submitButton.disabled = true;
-    levelSelect.disabled = false; // Enable level select after submission
-    levelSelected = false; // Reset level selected flag
-    typingStarted = false; // Reset typing started flag
+    levelSelect.disabled = false;
+    levelSelected = false;
+    typingStarted = false;
 });
 
 clearHistoryButton.addEventListener('click', () => {
@@ -126,5 +127,5 @@ function calculateAccuracy(originalText, typedText) {
         }
     });
 
-    return (correctWords / originalWords.length) * 100;
+    return (correctWords / originalWords.length) * 100 || 0;
 }
