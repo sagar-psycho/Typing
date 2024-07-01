@@ -15,7 +15,7 @@ body {
 }
 
 .left-section, .right-section {
-    flex-basis: 45%; /* Adjust as needed */
+    flex-basis: 45%;
     margin-bottom: 20px;
 }
 
@@ -54,7 +54,7 @@ th, td {
     padding: 8px;
     text-align: center;
 }
-#text{
+#text, #result{
     color: red;
     font-family: "Noto Serif", serif;
     font-optical-sizing: auto;
@@ -79,6 +79,12 @@ th, td {
         margin-top: -40px;
         margin-bottom: 10px;
     }
+}
+
+#faq {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
 }
 #faq h2{
     text-align: center;
