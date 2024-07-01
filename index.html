@@ -38,8 +38,11 @@
             <p id="timer">Time: 0.00 seconds</p>
             <p id="text"></p>
             <textarea id="input" placeholder="Start typing..." disabled></textarea><br><br>
-            <button id="start" class="btn btn-success">Start</button>
-            <button id="submit" class="btn btn-secondary" disabled>Submit</button>
+            <div class="buttt">
+                <button id="start" class="btn btn-success">Start</button>
+                <button id="submit" class="btn btn-secondary" disabled>Submit</button>
+                <button id="restart" style="display: none;" class="btn btn-primary">Restart</button>
+            </div>
             <p id="result"></p>
         </div>
         <div class="right-section">
@@ -101,7 +104,12 @@
         </div>
     </div>
     </div>
-
+</div>
+<div id="delete-pop" style="display: none;">
+    <h2><b>Delete</b></h2>
+    <p>Confirm do you want to clear chat</p>
+    <button class="cancel-btn btn btn-success" onclick="no()">Cancel</button>
+    <button class="btn btn-danger yes-btn" onclick="yes()">Ok</button>
 </div>
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
