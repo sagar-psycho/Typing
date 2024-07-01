@@ -32,7 +32,11 @@ textarea {
     height: 100px;
     margin: 10px 0;
 }
-
+.buttt{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -88,4 +92,38 @@ th, td {
 }
 #faq h2{
     text-align: center;
+}
+
+#delete-pop {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    text-align: center;
+}
+
+#delete-pop h2 {
+    margin-bottom: 15px;
+}
+
+#delete-pop p {
+    margin-bottom: 20px;
+}
+
+#delete-pop button {
+    margin: 5px;
+}
+
+@media (max-width: 789px) {
+    #delete-pop{
+        width: 50%;
+        display: bl;
+    }
 }
