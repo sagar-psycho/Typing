@@ -7,6 +7,7 @@ const resultElement = document.getElementById('result');
 const levelSelect = document.getElementById('level');
 const recordsTable = document.getElementById('recordsTable').getElementsByTagName('tbody')[0];
 const clearHistoryButton = document.getElementById('clearHistory');
+const restartButton = document.getElementById('restart');
 let startTime;
 let timerInterval;
 let levelSelected = false;
@@ -72,6 +73,19 @@ startButton.addEventListener('click', () => {
     }, 100);
 });
 
+inputElement.addEventListener('input', () => {
+    if (textElement.textContent.startsWith(inputElement.value)) {
+        // The text matches so far, do nothing
+    } else {
+        clearInterval(timerInterval);
+        inputElement.disabled = true;
+        submitButton.disabled = true;
+        resultElement.textContent = 'Text does not match. Please try again.';
+        showRestartButton();
+        typingStarted = false;
+    }
+});
+
 submitButton.addEventListener('click', () => {
     clearInterval(timerInterval);
     const currentTime = new Date().getTime();
@@ -87,6 +101,7 @@ submitButton.addEventListener('click', () => {
         resultElement.textContent = `Text does not match. Please try again.`;
     }
 
+    showRestartButton();
     inputElement.disabled = true;
     submitButton.disabled = true;
     levelSelect.disabled = false;
@@ -95,7 +110,11 @@ submitButton.addEventListener('click', () => {
 });
 
 clearHistoryButton.addEventListener('click', () => {
-    clearHistory();
+    showDeletePopup();
+});
+
+restartButton.addEventListener('click', () => {
+    resetTest();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -128,4 +147,38 @@ function calculateAccuracy(originalText, typedText) {
     });
 
     return (correctWords / originalWords.length) * 100 || 0;
+}
+
+function showDeletePopup() {
+    document.getElementById('delete-pop').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function hideDeletePopup() {
+    document.getElementById('delete-pop').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function no() {
+    hideDeletePopup();
+}
+
+function yes() {
+    clearHistory();
+    hideDeletePopup();
+}
+
+function showRestartButton() {
+    restartButton.style.display = 'block';
+}
+
+function resetTest() {
+    inputElement.value = '';
+    resultElement.textContent = '';
+    timerElement.textContent = 'Time: 0.00 seconds';
+    restartButton.style.display = 'none';
+    inputElement.disabled = false;
+    submitButton.disabled = false;
+    typingStarted = false;
+    textElement.textContent = texts[levelSelect.value];
 }
