@@ -182,3 +182,8 @@ function resetTest() {
     typingStarted = false;
     textElement.textContent = texts[levelSelect.value];
 }
+
+document.addEventListener("contextmenu", function(event){
+    alert("inspect is not allowed");
+    event.preventDefault();
+})
