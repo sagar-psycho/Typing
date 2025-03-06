@@ -8,10 +8,15 @@ const levelSelect = document.getElementById('level');
 const recordsTable = document.getElementById('recordsTable').getElementsByTagName('tbody')[0];
 const clearHistoryButton = document.getElementById('clearHistory');
 const restartButton = document.getElementById('restart');
+const toggleSoundButton = document.getElementById('toggleSound');
+const clickSound = document.getElementById('clickSound');
+const typingSound = document.getElementById('typingSound');
+
 let startTime;
 let timerInterval;
 let levelSelected = false;
 let typingStarted = false;
+let soundEnabled = true;
 
 const texts = {
     beginner: "The quick brown fox jumps over the lazy dog",
@@ -19,40 +24,53 @@ const texts = {
     advanced: "Advanced typing tests involve complex sentences with punctuation"
 };
 
-function loadRecords() {
-    const records = JSON.parse(localStorage.getItem('typingRecords')) || [];
-    records.forEach(record => addRecordToTable(record.level, record.time, record.wpm, record.accuracy));
-}
+// Load records and initialize the text on page load
+document.addEventListener('DOMContentLoaded', () => {
+    textElement.textContent = texts[levelSelect.value] || "";
+    loadRecords();
+});
 
-function saveRecord(level, time, wpm, accuracy) {
-    const records = JSON.parse(localStorage.getItem('typingRecords')) || [];
-    records.push({ level, time, wpm, accuracy });
-    localStorage.setItem('typingRecords', JSON.stringify(records));
-}
+// Toggle sound feature
+toggleSoundButton.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    alert(`Sound ${soundEnabled ? 'enabled' : 'disabled'}`);
+});
 
-function clearHistory() {
-    localStorage.removeItem('typingRecords');
-    recordsTable.innerHTML = ''; // Clear the table content visually
-}
-
-levelSelect.addEventListener('change', () => {
-    if (typingStarted) {
-        alert('Please complete the typing test before changing the level.');
-        levelSelect.value = levelSelect.dataset.previousValue; // Revert to previous value
-    } else {
-        if (!levelSelected) {
-            levelSelected = true;
-        }
-        textElement.textContent = texts[levelSelect.value];
+// Play click sound on mouse clicks
+document.addEventListener('click', () => {
+    if (soundEnabled) {
+        clickSound.currentTime = 0; // Reset to start
+        clickSound.play();
     }
 });
 
+// Play typing sound for each key press in the input area
+inputElement.addEventListener('keypress', () => {
+    if (soundEnabled) {
+        typingSound.currentTime = 0; // Reset to start
+        typingSound.play();
+    }
+});
+
+// Handle level selection changes
+levelSelect.addEventListener('change', () => {
+    if (typingStarted) {
+        alert('Please complete the typing test before changing the level.');
+        levelSelect.value = levelSelect.dataset.previousValue || "Select Level";
+    } else {
+        levelSelected = true;
+        textElement.textContent = texts[levelSelect.value] || "";
+    }
+});
+
+// Start button functionality
 startButton.addEventListener('click', () => {
     if (levelSelect.value === 'Select Level') {
-        alert('Please select a level before starting.');
+        document.getElementById('level-alert').style.display = 'block';
         return;
     }
 
+    document.getElementById('level-alert').style.display = 'none';
     levelSelected = true;
     typingStarted = true;
 
@@ -73,10 +91,9 @@ startButton.addEventListener('click', () => {
     }, 100);
 });
 
+// Handle typing validation
 inputElement.addEventListener('input', () => {
-    if (textElement.textContent.startsWith(inputElement.value)) {
-        // The text matches so far, do nothing
-    } else {
+    if (!textElement.textContent.startsWith(inputElement.value)) {
         clearInterval(timerInterval);
         inputElement.disabled = true;
         submitButton.disabled = true;
@@ -86,6 +103,7 @@ inputElement.addEventListener('input', () => {
     }
 });
 
+// Submit button functionality
 submitButton.addEventListener('click', () => {
     clearInterval(timerInterval);
     const currentTime = new Date().getTime();
@@ -109,24 +127,39 @@ submitButton.addEventListener('click', () => {
     typingStarted = false;
 });
 
+// Restart button functionality
+restartButton.addEventListener('click', resetTest);
+
+// Clear history button functionality
 clearHistoryButton.addEventListener('click', () => {
-    showDeletePopup();
+    const records = JSON.parse(localStorage.getItem('typingRecords')) || [];
+    if (records.length === 0) {
+        alert('No records to clear!');
+    } else {
+        clearHistory();
+    }
 });
 
-restartButton.addEventListener('click', () => {
-    resetTest();
-});
+// Load saved records from local storage
+function loadRecords() {
+    const records = JSON.parse(localStorage.getItem('typingRecords')) || [];
+    records.forEach(record => addRecordToTable(record.level, record.time, record.wpm, record.accuracy));
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-    textElement.textContent = texts[levelSelect.value];
-    loadRecords();
-});
+// Save a record to local storage
+function saveRecord(level, time, wpm, accuracy) {
+    const records = JSON.parse(localStorage.getItem('typingRecords')) || [];
+    records.push({ level, time, wpm, accuracy });
+    localStorage.setItem('typingRecords', JSON.stringify(records));
+}
 
+// Add a record to the table
 function addRecord(level, time, wpm, accuracy) {
     addRecordToTable(level, time, wpm, accuracy);
     saveRecord(level, time, wpm, accuracy);
 }
 
+// Add a record visually to the table
 function addRecordToTable(level, time, wpm, accuracy) {
     const row = recordsTable.insertRow();
     row.insertCell(0).textContent = level;
@@ -135,6 +168,25 @@ function addRecordToTable(level, time, wpm, accuracy) {
     row.insertCell(3).textContent = accuracy + "%";
 }
 
+// Clear all saved records
+function clearHistory() {
+    localStorage.removeItem('typingRecords');
+    recordsTable.innerHTML = '';
+}
+
+// Reset the typing test
+function resetTest() {
+    inputElement.value = '';
+    resultElement.textContent = '';
+    timerElement.textContent = 'Time: 0.00 seconds';
+    restartButton.style.display = 'none';
+    inputElement.disabled = false;
+    submitButton.disabled = true;
+    typingStarted = false;
+    textElement.textContent = texts[levelSelect.value] || "";
+}
+
+// Calculate typing accuracy
 function calculateAccuracy(originalText, typedText) {
     const originalWords = originalText.split(/\s+/);
     const typedWords = typedText.split(/\s+/);
@@ -149,41 +201,7 @@ function calculateAccuracy(originalText, typedText) {
     return (correctWords / originalWords.length) * 100 || 0;
 }
 
-function showDeletePopup() {
-    document.getElementById('delete-pop').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-}
-
-function hideDeletePopup() {
-    document.getElementById('delete-pop').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-}
-
-function no() {
-    hideDeletePopup();
-}
-
-function yes() {
-    clearHistory();
-    hideDeletePopup();
-}
-
+// Show the restart button
 function showRestartButton() {
     restartButton.style.display = 'block';
 }
-
-function resetTest() {
-    inputElement.value = '';
-    resultElement.textContent = '';
-    timerElement.textContent = 'Time: 0.00 seconds';
-    restartButton.style.display = 'none';
-    inputElement.disabled = false;
-    submitButton.disabled = false;
-    typingStarted = false;
-    textElement.textContent = texts[levelSelect.value];
-}
-
-document.addEventListener("contextmenu", function(event){
-    alert("inspect is not allowed");
-    event.preventDefault();
-})
